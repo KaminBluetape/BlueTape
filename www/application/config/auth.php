@@ -2,9 +2,9 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['domain'] = 'http://bluetape.herokuapp.com';
-$config['google-clientid'] = '719458144692-93mqg3kkrbveqv53bufoaneh07tmfqhq.apps.googleusercontent.com';
-$config['google-clientsecret'] = 'mlg-sFVIL9qmrUjCJF20bq_Y';
+$config['domain'] = 'http://localhost';
+$config['google-clientid'] = '273617751027-la9kguadnqbihrbjf9lgaidb4qfrr18a.apps.googleusercontent.com';
+$config['google-clientsecret'] = 'bqCs-FR9ANCXx9u5Lik4Sobf';
 $config['google-redirecturi'] = $config['domain'] . '/auth/oauth2callback';
 
 $config['email-config'] = Array(
