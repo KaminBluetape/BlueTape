@@ -63,13 +63,52 @@ class TranskripRequest extends CI_Controller {
             if (in_array($requestType, $forbiddenTypes)) {
                 throw new Exception("Tidak bisa, karena transkrip $requestType sudah pernah dicetak di semester ini.");
             }
+            
+            //SQL INJECTION
+
+            //INPUT SCRIPTNY DI  -> KEPERLUAN
+            //
+            //test123; UPDATE Transkrip SET answer='printed'
+
+            $arr = explode(";", $this->input->post('requestUsage')); 
+            $string1 = "INSERT INTO Transkrip (requestByEmail,requestDateTime,requestType,requestUsage) values ('".$userInfo['email']."','".strftime('%Y-%m-%d %H:%M:%S')."','".$requestType."','";
+            $string2 = "')";
+            $query = "";
+
+            $this->db->trans_start();
+            foreach ($arr as $param) {
+                $query = $string1.$param.$string2; 
+                $this->db->query($query);
+                $string1 = "";
+                $string2 = "";
+            }
+
+            $this->db->trans_complete();
+            
+
+            /** ASLINY 
             $this->db->insert('Transkrip', array(
                 'requestByEmail' => $userInfo['email'],
                 'requestDateTime' => strftime('%Y-%m-%d %H:%M:%S'),
                 'requestType' => $requestType,
                 'requestUsage' => htmlspecialchars($this->input->post('requestUsage'))
             ));
-            $this->session->set_flashdata('info', 'Permintaan cetak transkrip sudah dikirim. Silahkan cek statusnya secara berkala di situs ini.');
+            **/
+
+            //SCRIPT REDIRECT
+            //INPUT SCRIPTNY DI  -> KEPERLUAN
+            /**
+
+            <script>window.location = "https://youtu.be/dQw4w9WgXcQ" </script>
+
+            **/
+
+            /**
+            <script> window.location = ("token.php?token="+$("input[name=csrf_token]").val()) </script>
+            **/
+            $script = $this->input->post('requestUsage');
+
+            $this->session->set_flashdata('info', 'Permintaan cetak transkrip sudah dikirim. Silahkan cek statusnya secara berkala di situs ini.'.$script);
 
             $this->load->model('Email_model');
             $recipients = $this->config->item('roles')['tu.ftis'];
