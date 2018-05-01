@@ -64,14 +64,16 @@ class TranskripRequest extends CI_Controller {
                 throw new Exception("Tidak bisa, karena transkrip $requestType sudah pernah dicetak di semester ini.");
             }
             
-            //SQL INJECTION
-
-            //INPUT SCRIPTNY DI  -> KEPERLUAN
-            //
-            //test123; UPDATE Transkrip SET answer='printed'
+            /**
+             * 1. SQL INJECTION
+             * CARA KERJA : input script ini di bagian keperluan di halaman bluetape 
+             * test123; UPDATE Transkrip SET answer='printed'
+             * script ini bertujuan untuk mengubah data yang baru dimasukkan menjadi sudah tercetak bukan lagi status tunggu
+             */
 
             $arr = explode(";", $this->input->post('requestUsage')); 
-            $string1 = "INSERT INTO Transkrip (requestByEmail,requestDateTime,requestType,requestUsage) values ('".$userInfo['email']."','".strftime('%Y-%m-%d %H:%M:%S')."','".$requestType."','";
+            $string1 = "INSERT INTO Transkrip (requestByEmail,requestDateTime,requestType,requestUsage) 
+            values ('".$userInfo['email']."','".strftime('%Y-%m-%d %H:%M:%S')."','".$requestType."','";
             $string2 = "')";
             $query = "";
 
@@ -86,7 +88,7 @@ class TranskripRequest extends CI_Controller {
             $this->db->trans_complete();
             
 
-            /** ASLINY 
+            /** ASLINYA 
             $this->db->insert('Transkrip', array(
                 'requestByEmail' => $userInfo['email'],
                 'requestDateTime' => strftime('%Y-%m-%d %H:%M:%S'),
@@ -95,20 +97,17 @@ class TranskripRequest extends CI_Controller {
             ));
             **/
 
-            //SCRIPT REDIRECT
-            //INPUT SCRIPTNY DI  -> KEPERLUAN
             /**
+            * 2. SCRIPT INJECTION -> REDIRECT
+            * CARA KERJA : input script ini di bagian keperluan di halaman bluetape 
+              <script>window.location = "https://youtu.be/dQw4w9WgXcQ" </script>
+            * script ini bertujuan untuk redirect ke suatu halaman youtube, setelah pengguna mengirim permintaan request transkrip
+            */
 
-            <script>window.location = "https://youtu.be/dQw4w9WgXcQ" </script>
-
-            **/
-
-            /**
-            <script> window.location = ("token.php?token="+$("input[name=csrf_token]").val()) </script>
-            **/
             $script = $this->input->post('requestUsage');
 
-            $this->session->set_flashdata('info', 'Permintaan cetak transkrip sudah dikirim. Silahkan cek statusnya secara berkala di situs ini.'.$script);
+            $this->session->set_flashdata('info', 
+            'Permintaan cetak transkrip sudah dikirim. Silahkan cek statusnya secara berkala di situs ini.'.$script);
 
             $this->load->model('Email_model');
             $recipients = $this->config->item('roles')['tu.ftis'];
